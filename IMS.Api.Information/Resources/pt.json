@@ -1,0 +1,4 @@
+{
+  //DataAnnotations
+  "REQUIRED_FIELD": "O campo {0} é obrigatório"
+}
