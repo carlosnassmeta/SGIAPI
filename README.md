@@ -1,22 +1,22 @@
-﻿# BRF | SGI API 
+Este MOC usa as seguintes tecnologias e precisam estar instaladas no PC que rodará a aplicação
+.NET Core 3.1 https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-aspnetcore-3.1.10-windows-x64-installer
+Node JS https://nodejs.org/dist/v14.15.3/node-v14.15.3-x64.msi
+SQL Server Express https://go.microsoft.com/fwlink/?linkid=866658
+Visual Studio 2019 (rodar testes unitários) https://visualstudio.microsoft.com/pt-br/thank-you-downloading-visual-studio/?sku=Community&rel=16
 
-# EF Core Migrations
+Download os fontes em duas pastas
+SGIAPI - API com os enspoints para conexão ao banco de dados
+SGIAngular - front end para cadastro de caminhões
 
-Como o contexto do EF Core está no projeto `IMS.Api.Infrastructure` e o projeto de entrada (execução) que contém a connection string é o `IMS.Api.Information`, é necessário informar ao EF Core o assembly que contém as migrations.
+Executar os comandos no prompt do comando DOS (elevado)
+cd SGI\SGIAPI\IMS.Api.Information
+dotnet run --force
+(Rodará um webserver com um endpoint)
 
-Essa configuração foi realizada na classe `IMS.Infrastructure.Configuration.InfrastructureIoC` no trecho de código abaixo:
+Executar os comandos em outro prompt do comando DOS (elevado)
+cd SGI\SGIAngular
+ng serve
+(Rodará um webserver com um frontend Angular)
 
-```CSharp
-services.AddDbContext<ApplicationContext>(options =>
-{
-    options.UseSqlServer(connectionString, x =>
-        x.MigrationsHistoryTable(HistoryRepository.DefaultTableName, "ims")
-            .MigrationsAssembly("IMS.Infrastructure"));
-});
-```
-
-Com esta configuração, para executar qualquer comando do Migrations, basta informar o projeto de entrada através do parâmetro `--project` conforme exemplo:
-
-```shell
-dotnet ef database update --project .\IMS.Api.Information\IMS.Api.Information.csproj
-```
+Rodar a aplicação em https://localhost:4200/
+Testar o endpoint em https://localhost:44308/swagger/index.html
