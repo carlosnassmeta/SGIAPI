@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace IMS.Api.Information.Controllers.V1
 {
-    //[AllowAnonymous]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class TruckController : ControllerBase
@@ -19,8 +18,8 @@ namespace IMS.Api.Information.Controllers.V1
         [HttpGet]
         public async Task<ActionResult<List<Truck>>> Get([FromServices] ApplicationContext context)
         {
-            var users = await context.Truck.ToListAsync();
-            return users;
+            var truck = await context.Truck.ToListAsync();
+            return truck;
         }
 
         [HttpGet("{id:int}")]
@@ -28,8 +27,8 @@ namespace IMS.Api.Information.Controllers.V1
         {
             try
             {
-                var user = context.Truck.FirstOrDefault(x => x.TruckId == id);
-                return user;
+                var truck = await context.Truck.FirstOrDefaultAsync(x => x.TruckId == id);
+                return truck;
             }
             catch
             {
@@ -44,9 +43,17 @@ namespace IMS.Api.Information.Controllers.V1
             {
                 try
                 {
-                    context.Truck.Add(model);
-                    await context.SaveChangesAsync();
-                    return model;
+                    if (model.ManufactureYear == model.ModelYear || model.ManufactureYear+1 == model.ModelYear)
+                    {
+                        context.Truck.Add(model);
+                        await context.SaveChangesAsync();
+                        return model;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Erro - Ano Modelo", "Ano Modelo " + model.ModelYear + " deve ser igual ao Ano de Fabricação " + model.ManufactureYear + " ou ano subsequente");
+                        return BadRequest(ModelState);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -66,9 +73,17 @@ namespace IMS.Api.Information.Controllers.V1
             {
                 try
                 {
-                    context.Truck.Update(model);
-                    await context.SaveChangesAsync();
-                    return model;
+                    if (model.ManufactureYear == model.ModelYear || model.ManufactureYear+1 == model.ModelYear)
+                    {
+                        context.Truck.Update(model);
+                        await context.SaveChangesAsync();
+                        return model;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Erro - Ano Modelo", "Ano Modelo " + model.ModelYear + " deve ser igual ao Ano de Fabricação " + model.ManufactureYear + " ou ano subsequente");
+                        return BadRequest(ModelState);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -88,8 +103,8 @@ namespace IMS.Api.Information.Controllers.V1
             {
                 try
                 {
-                    var user = context.Truck.FirstOrDefault(x => x.TruckId == id);
-                    context.Truck.Remove(user);
+                    var truck = context.Truck.FirstOrDefault(x => x.TruckId == id);
+                    context.Truck.Remove(truck);
                     await context.SaveChangesAsync();
                     return true;
                 }
